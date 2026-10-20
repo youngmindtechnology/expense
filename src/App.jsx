@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db, syncOfflineData } from './lib/db';
+import { db, syncWithCloud, deleteTransaction, restoreTransaction } from './lib/db';
 import { Plus, Wifi, WifiOff, Trash2, Pencil, X, Search, Download, Undo2, Minus } from 'lucide-react';
 import './App.css';
 
@@ -140,7 +140,8 @@ export default function App() {
 
   /* ---------- effects ---------- */
   useEffect(() => {
-    const on = () => { setIsOnline(true); syncOfflineData(); };
+    if (navigator.onLine) syncWithCloud();
+    const on = () => { setIsOnline(true); syncWithCloud(); };
     const off = () => setIsOnline(false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
@@ -223,15 +224,14 @@ export default function App() {
 
     closeSheet();
     flash(editing ? 'Changes saved' : type === 'income' ? 'Money added' : 'Expense recorded');
-    if (navigator.onLine) syncOfflineData();
+    syncWithCloud();
   };
 
   const remove = async (t) => {
     lastDeleted.current = t;
-    await db.transactions.delete(t.id);
+    await deleteTransaction(t);
     flash('Transaction deleted', async () => {
-      await db.transactions.put({ ...lastDeleted.current, synced: 0 });
-      if (navigator.onLine) syncOfflineData();
+      await restoreTransaction(lastDeleted.current);
       setToast(null);
     });
   };
@@ -293,7 +293,7 @@ export default function App() {
         </div>
         <div className={`status ${isOnline ? 'is-on' : 'is-off'}`}>
           {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
-          <span>{isOnline ? 'Online' : 'Offline'}</span>
+          <span>{isOnline ? (unsynced > 0 ? 'Syncing' : 'Cloud synced') : 'Offline'}</span>
           {unsynced > 0 && <span className="status-count">{unsynced} pending</span>}
         </div>
       </header>
