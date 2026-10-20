@@ -1,0 +1,59 @@
+.goal-list { display: grid; gap: 10px; perspective: 900px; }
+
+.goal {
+  display: block; width: 100%; text-align: left;
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 14px 13px;
+  transform-origin: center top;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.goal:hover { transform: perspective(700px) rotateX(4deg) translateZ(8px); box-shadow: 0 16px 24px -16px rgba(40, 30, 10, 0.4); }
+.goal-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.goal-top strong { font-size: 0.95rem; font-weight: 600; }
+.goal-top span { font-size: 0.8rem; color: var(--ink-faint); display: inline-flex; align-items: center; gap: 2px; }
+.goal-foot { display: flex; justify-content: space-between; margin-top: 9px; font-size: 0.82rem; color: var(--ink-soft); }
+.goal-foot b { color: var(--ink); font-weight: 600; }
+.goal-foot .over { color: var(--clay); font-weight: 600; }
+
+.done { display: flex; justify-content: space-between; gap: 10px; font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.done span em { display: block; font-style: normal; font-size: 0.74rem; color: var(--ink-faint); margin-top: 2px; }
+.done b { font-weight: 600; color: var(--ink-soft); text-align: right; }
+
+.hint { margin: 0 0 4px; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.45; }
+.warn { margin: 8px 0 0; font-size: 0.8rem; color: #96610f; }
+
+/* progress ring */
+.ring { width: 150px; height: 150px; display: block; margin: 4px auto 0; filter: drop-shadow(0 8px 6px rgba(60, 50, 30, 0.15)); transform: perspective(500px) rotateX(16deg); transition: transform 0.4s ease; }
+.ring:hover { transform: perspective(500px) rotateX(0deg) scale(1.03); }
+.ring-track { fill: none; stroke: #e3dccd; stroke-width: 12; }
+.ring-fill { fill: none; stroke: var(--green); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.7s cubic-bezier(.2,.8,.2,1); }
+.ring-fill.over { stroke: var(--clay); }
+.ring-k { font-size: 7px; fill: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.1em; }
+.ring-v { font-size: 15px; font-family: var(--serif); fill: var(--ink); }
+.ring-note { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; font-size: 0.88rem; color: var(--ink-soft); text-align: center; }
+
+/* expenses inside a goal */
+.exp-list { margin-top: 14px; max-height: 220px; overflow-y: auto; }
+.exp { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); animation: slideIn 0.4s cubic-bezier(.2,.8,.2,1) both; }
+.exp-body { flex: 1; min-width: 0; }
+.exp-body strong { font-size: 0.9rem; font-weight: 600; }
+.exp-body p { margin: 2px 0 0; font-size: 0.78rem; color: var(--ink-soft); }
+.exp-amt { font-weight: 600; font-size: 0.9rem; color: var(--clay); }
+.icon-btn { flex: none; width: 28px; height: 28px; border-radius: 8px; border: none; background: transparent; color: var(--ink-faint); display: grid; place-items: center; }
+.icon-btn:hover { background: var(--clay-soft); color: var(--clay); }
+
+.add-exp { margin-top: 16px; padding-top: 4px; border-top: 1px dashed var(--line); }
+.add-exp select { margin-top: 2px; }
+.add-exp .btn { margin-top: 12px; }
+
+.sheet-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 12px; }
+.sheet-foot .btn { flex: none; }
+.discard { color: var(--clay); }
+
+.confirm { background: var(--green-soft); border-radius: 14px; padding: 16px; margin-top: 18px; text-align: center; animation: slideIn 0.4s cubic-bezier(.2,.8,.2,1) both; }
+.confirm p { margin: 4px 0; font-size: 0.88rem; color: var(--ink-soft); }
+.confirm strong { display: block; font-family: var(--serif); font-weight: 500; font-size: 1.7rem; margin: 2px 0; color: var(--green); }
+.confirm .soft { font-size: 0.82rem; margin-top: 8px; }
+.confirm-actions { display: flex; gap: 10px; margin-top: 14px; }

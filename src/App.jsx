@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, syncWithCloud, deleteTransaction, restoreTransaction } from './lib/db';
 import { Plus, Wifi, WifiOff, Trash2, Pencil, X, Search, Download, Undo2, Minus } from 'lucide-react';
+import Trips from './Trips';
 import './App.css';
 
 const CATEGORIES = [
@@ -329,6 +330,9 @@ export default function App() {
           <Plus size={16} /> Add money
         </button>
       </div>
+
+      {/* Spending goals */}
+      <Trips categories={CATEGORIES} money={money} balance={balance} flash={flash} />
 
       {/* Budget */}
       <section className="panel">
