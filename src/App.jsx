@@ -6,7 +6,7 @@ import Trips from './Trips';
 import { THEME } from './Theme';
 import { PROFILE } from './profiles';
 import Welcome from './Welcome';
-import AccountBar from './Account';
+import AccountBar from './account';
 import { Hero, LoveNote, Petals } from './Romance';
 import './App.css';
 import './rose.css';
