@@ -3,9 +3,15 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db, syncWithCloud, deleteTransaction, restoreTransaction } from './lib/db';
 import { Plus, Wifi, WifiOff, Trash2, Pencil, X, Search, Download, Undo2, Minus } from 'lucide-react';
 import Trips from './Trips';
+import { THEME } from './Theme';
+import { PROFILE } from './profiles';
+import Welcome from './Welcome';
+import AccountBar from './Account';
+import { Hero, LoveNote, Petals } from './Romance';
 import './App.css';
+import './rose.css';
 
-const CATEGORIES = [
+const BASE_CATEGORIES = [
   { name: 'Food & Snacks', color: '#b4532a' },
   { name: 'Data & Airtime', color: '#2f5d7c' },
   { name: 'Transport', color: '#c79a2e' },
@@ -13,6 +19,7 @@ const CATEGORIES = [
   { name: 'Hostel & Utilities', color: '#7a4b62' },
   { name: 'Other', color: '#6b6a64' },
 ];
+const CATEGORIES = BASE_CATEGORIES.map((c, i) => ({ ...c, color: THEME.categoryColors?.[i] || c.color }));
 const colorOf = (name) => CATEGORIES.find((c) => c.name === name)?.color || '#6b6a64';
 
 const money = (n) =>
@@ -39,7 +46,7 @@ function readBudget() {
   }
 }
 
-export default function App() {
+function Tracker() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // sheet / form state
@@ -224,7 +231,13 @@ export default function App() {
     else await db.transactions.add({ id: crypto.randomUUID(), ...payload });
 
     closeSheet();
-    flash(editing ? 'Changes saved' : type === 'income' ? 'Money added' : 'Expense recorded');
+    flash(
+      editing
+        ? THEME.toasts.edit || 'Changes saved'
+        : type === 'income'
+        ? THEME.toasts.income || 'Money added'
+        : THEME.toasts.expense || 'Expense recorded'
+    );
     syncWithCloud();
   };
 
@@ -287,10 +300,13 @@ export default function App() {
   /* ---------- render ---------- */
   return (
     <div className="shell">
+      {THEME.romantic && <Petals />}
+      <AccountBar />
+
       <header className="topbar">
         <div>
-          <p className="eyebrow">Campus Ledger</p>
-          <h1 className="title">Your money, this semester</h1>
+          <p className="eyebrow">{THEME.eyebrow}</p>
+          <h1 className="title">{THEME.title}</h1>
         </div>
         <div className={`status ${isOnline ? 'is-on' : 'is-off'}`}>
           {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
@@ -298,6 +314,8 @@ export default function App() {
           {unsynced > 0 && <span className="status-count">{unsynced} pending</span>}
         </div>
       </header>
+
+      {THEME.romantic && <Hero />}
 
       {/* Balance card */}
       <section className="stage">
@@ -330,6 +348,8 @@ export default function App() {
           <Plus size={16} /> Add money
         </button>
       </div>
+
+      {THEME.romantic && <LoveNote />}
 
       {/* Spending goals */}
       <Trips categories={CATEGORIES} money={money} balance={balance} flash={flash} />
@@ -568,6 +588,11 @@ export default function App() {
       )}
     </div>
   );
+}
+
+/* One site, two people: the welcome page first, then the signed-in person's own tracker */
+export default function App() {
+  return PROFILE ? <Tracker /> : <Welcome />;
 }
 
 /* ---------- charts (plain SVG, no extra dependency) ---------- */

@@ -6,7 +6,7 @@
   padding: 14px 14px 13px;
   transform-origin: center top;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1) both;
+  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1) backwards;
   animation-delay: calc(var(--i) * 60ms);
 }
 .goal:hover { transform: perspective(700px) rotateX(4deg) translateZ(8px); box-shadow: 0 16px 24px -16px rgba(40, 30, 10, 0.4); }

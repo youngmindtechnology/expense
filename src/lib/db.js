@@ -1,11 +1,14 @@
 import Dexie from 'dexie';
 import { createClient } from '@supabase/supabase-js';
+import { PROFILE } from '../profiles';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const db = new Dexie('CampusExpenseDB');
+// Each person has their own local database and their own rows in the cloud
+export const OWNER = PROFILE?.id || null;
+export const db = new Dexie(PROFILE?.dbName || 'CampusExpenseDB');
 db.version(1).stores({
   transactions: 'id, type, amount, category, created_at, synced'
 });
@@ -41,7 +44,7 @@ async function syncTable(table) {
     // Push new and edited records
     const unsynced = await local.where('synced').equals(0).toArray();
     if (unsynced.length > 0) {
-      const payload = unsynced.map(({ synced, ...rest }) => ({ ...rest, synced: true }));
+      const payload = unsynced.map(({ synced, ...rest }) => ({ ...rest, synced: true, owner: OWNER }));
       const { error } = await supabase.from(table).upsert(payload);
       if (error) {
         console.error(`Cloud push error (${table}):`, error);
@@ -59,7 +62,11 @@ async function syncTable(table) {
     }
 
     // Pull the cloud down without overwriting anything still waiting to upload
-    const { data, error } = await supabase.from(table).select('*');
+    let query = supabase.from(table).select('*');
+    query = PROFILE?.adoptsUnowned
+      ? query.or(`owner.eq.${OWNER},owner.is.null`)
+      : query.eq('owner', OWNER);
+    const { data, error } = await query;
     if (error || !data) return;
 
     const pending = new Set(
@@ -78,7 +85,12 @@ async function syncTable(table) {
     // Records that were deleted from another device
     const localSynced = await local.where('synced').equals(1).primaryKeys();
     const gone = localSynced.filter((id) => !cloudIds.has(id));
-    if (gone.length > 0) await local.bulkDelete(gone);
+    if (gone.length > 0) {
+      // A response that would wipe most of the local data is more likely a mistake than a real delete
+      const suspicious = gone.length > 5 && gone.length > localSynced.length / 2;
+      if (suspicious) console.warn(`Skipped removing ${gone.length} ${table} records after sync`);
+      else await local.bulkDelete(gone);
+    }
   } catch (err) {
     // A problem with one table (for example a missing cloud table) must not stop the others
     console.error(`Cloud sync error (${table}):`, err);
@@ -86,7 +98,7 @@ async function syncTable(table) {
 }
 
 export async function syncWithCloud() {
-  if (!navigator.onLine || syncing) return;
+  if (!OWNER || !navigator.onLine || syncing) return;
   syncing = true;
   try {
     await pushDeletes();

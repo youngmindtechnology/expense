@@ -65,7 +65,7 @@ button { cursor: pointer; }
   border-radius: 22px;
   padding: 22px 22px 20px;
   box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 26px 40px -22px rgba(20, 40, 30, 0.7);
-  animation: rise 0.8s cubic-bezier(.2,.8,.2,1) both;
+  animation: rise 0.8s cubic-bezier(.2,.8,.2,1) backwards;
   touch-action: pan-y;
 }
 .balance-glow {
@@ -193,7 +193,7 @@ button { cursor: pointer; }
   border-radius: 12px;
   transform-origin: center top;
   transition: transform 0.25s ease, background 0.2s, box-shadow 0.25s;
-  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1) both;
+  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1) backwards;
   animation-delay: calc(var(--i) * 45ms);
 }
 .tx:hover { background: #fff; transform: perspective(700px) rotateX(3deg) translateZ(6px); box-shadow: 0 12px 20px -14px rgba(40,30,10,0.35); border-bottom-color: transparent; z-index: 1; }
