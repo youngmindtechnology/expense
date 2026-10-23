@@ -5,7 +5,7 @@ import { Plus, Wifi, WifiOff, Trash2, Pencil, X, Search, Download, Undo2, Minus 
 import Trips from './Trips';
 import { THEME } from './Theme';
 import { PROFILE } from './profiles';
-import Welcome from './Welcome';
+import Welcome from './welcome';
 import AccountBar from './account';
 import { Hero, LoveNote, Petals } from './Romance';
 import './App.css';
