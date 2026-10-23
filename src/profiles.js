@@ -8,7 +8,7 @@ export const PROFILES = {
     name: 'Appiah Isaac',
     line: 'His ledger',
     variant: 'classic',
-    photo: '/photos/him.jpg',
+    photo: '/photos/him.jpeg',
     dbName: 'CampusExpenseDB', // keeps the data you already have on this phone
     adoptsUnowned: true // cloud rows saved before profiles existed belong to you
   },
@@ -17,7 +17,7 @@ export const PROFILES = {
     name: 'Natasha Agyen',
     line: 'My princess',
     variant: 'rose',
-    photo: '/photos/her.jpg',
+    photo: '/photos/her.jpeg',
     dbName: 'CampusExpenseDB_her'
   }
 };
